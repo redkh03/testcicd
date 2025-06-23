@@ -1,13 +1,19 @@
-import axios from "axios";
+import axiosInstance from "../axiosInstance";
 
-// Base URL de ton backend Spring
-const BASE_URL = "http://localhost:8081/api/statistics";
+// Pas besoin de BASE_URL car axiosInstance l’a déjà dans sa config
+const STATISTICS_ENDPOINT = "/statistics";
 
 // Fonctions API
-export const getStatistics = () => axios.get(BASE_URL);
-export const getStatisticById = (id: number) => axios.get(`${BASE_URL}/${id}`);
-export const createStatistic = (data: any) => axios.post(BASE_URL, data);
-export const updateStatistic = (id: number, data: any) => axios.put(`${BASE_URL}/${id}`, data);
-export const deleteStatistic = (id: number) => axios.delete(`${BASE_URL}/${id}`);
+export const getStatistics = () => axiosInstance.get(STATISTICS_ENDPOINT);
 
-export {};
+export const getStatisticById = (id: number) =>
+  axiosInstance.get(`${STATISTICS_ENDPOINT}/${id}`);
+
+export const createStatistic = (data: any) =>
+  axiosInstance.post(STATISTICS_ENDPOINT, data);
+
+export const updateStatistic = (id: number, data: any) =>
+  axiosInstance.put(`${STATISTICS_ENDPOINT}/${id}`, data);
+
+export const deleteStatistic = (id: number) =>
+  axiosInstance.delete(`${STATISTICS_ENDPOINT}/${id}`);
