@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useRef } from "react";
 import axios from "axios";
 import {
   ComposableMap,
@@ -29,8 +29,6 @@ function PredictionForm() {
   const [result, setResult] = useState<PredictionResponse | null>(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const [tooltipContent, setTooltipContent] = useState<string>("");
-  const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 });
   const [hoveredCountry, setHoveredCountry] = useState<string | null>(null);
   const mapContainerRef = useRef<HTMLDivElement>(null);
 
@@ -74,17 +72,11 @@ function PredictionForm() {
     return match ? riskColors[match.risk_level] ?? "#EEE" : "#EEE";
   };
 
-  const handleMouseEnter = (geo: any, event: React.MouseEvent) => {
-    setTooltipContent(geo.properties.name);
+  const handleMouseEnter = (geo: any) => {
     setHoveredCountry(geo.properties.name);
-    if (mapContainerRef.current) {
-      const rect = mapContainerRef.current.getBoundingClientRect();
-      setTooltipPosition({ x: event.clientX - rect.left, y: event.clientY - rect.top });
-    }
   };
 
   const handleMouseLeave = () => {
-    setTooltipContent("");
     setHoveredCountry(null);
   };
 
@@ -107,7 +99,7 @@ function PredictionForm() {
                     fill={getCountryColor(geo.properties.name)}
                     stroke="#D1D5DB"
                     strokeWidth={0.3}
-                    onMouseEnter={(e) => handleMouseEnter(geo, e)}
+                    onMouseEnter={() => handleMouseEnter(geo)}
                     onMouseLeave={handleMouseLeave}
                     style={{
                       default: {
@@ -134,19 +126,6 @@ function PredictionForm() {
             </Marker>
           )}
         </ComposableMap>
-        {hoveredCountry && (
-          <div
-            className="absolute bg-gray-800 text-white px-3 py-2 rounded-md shadow-lg z-50 pointer-events-none"
-            style={{ top: `${tooltipPosition.y + 15}px`, left: `${tooltipPosition.x + 15}px`, transform: "translateX(-50%)" }}
-          >
-            <div className="font-bold">{hoveredCountry}</div>
-            {result && (
-              <div className="mt-1">
-                Niveau de risque: {result.neighboring_countries_risk.find((c) => c.country.toLowerCase() === hoveredCountry.toLowerCase())?.risk_level ?? "Inconnu"}
-              </div>
-            )}
-          </div>
-        )}
       </div>
     );
   };
@@ -262,10 +241,36 @@ function PredictionForm() {
       {error && <p className="text-red-600 mt-4" role="alert">{error}</p>}
 
       {result && (
-        <div id="Global" className="mt-8">
+        <div id="Global" className="mt-8" style={{ overflow: "hidden", minHeight: 250 }}>
           {result.neighboring_countries_risk && type === "Propagation géographique" ? (
             <>
-              <div id="gauche" style={{ float: 'left', width: '60%' }}>
+              {/* CARTE A GAUCHE (70%) */}
+              <div id="carte" style={{ float: 'left', width: '70%' }}>
+                <h3 className="text-xl font-semibold mb-4 text-blue-800 border-b pb-2">
+                  Visualisation géographique
+                </h3>
+                {renderMap()}
+                {renderLegend()}
+              </div>
+              {/* RESULTATS A DROITE (30%) */}
+              <div id="resultats" style={{ marginLeft: '70%' }}>
+                {/* Bloc info pays survolé */}
+                <div className="mb-4 min-h-[60px]">
+                  {hoveredCountry ? (
+                    <>
+                      <div className="font-bold text-blue-700">{hoveredCountry}</div>
+                      <div>
+                        Niveau de risque : {
+                          result.neighboring_countries_risk.find(
+                            (c) => c.country.toLowerCase() === hoveredCountry.toLowerCase()
+                          )?.risk_level ?? "Inconnu"
+                        }
+                      </div>
+                    </>
+                  ) : (
+                    <span className="text-gray-500">Survolez un pays sur la carte pour voir le détail ici.</span>
+                  )}
+                </div>
                 <h3 className="text-xl font-semibold mb-4 text-blue-800 border-b pb-2">
                   Résultats de prédiction pour {countryName}
                 </h3>
@@ -273,13 +278,6 @@ function PredictionForm() {
                   <h4 className="text-lg font-medium mb-3">Niveaux de risque des pays voisins</h4>
                   {renderRiskList()}
                 </div>
-              </div>
-              <div id="droite" style={{ marginLeft: '60%' }}>
-                <h3 className="text-xl font-semibold mb-4 text-blue-800 border-b pb-2">
-                  Visualisation géographique
-                </h3>
-                {renderMap()}
-                {renderLegend()}
               </div>
             </>
           ) : (
