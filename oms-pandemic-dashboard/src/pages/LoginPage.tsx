@@ -10,22 +10,21 @@ function LoginPage() {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError("");
 
     try {
-      const response = await axios.post("http://localhost:8081/api/auth/login", { 
-        username,
-        password,
-      });
+      const res = await axios.post("http://localhost:8081/api/auth/login", { username, password });
+      const token = res.data;
 
-      const token = response.data.token; // ou .accessToken selon ta réponse
+      if (!token) {
+        setError("Token non reçu !");
+        return;
+      }
       localStorage.setItem("token", token);
-
-      console.log("✅ Login réussi :", response.data);
-      sessionStorage.setItem("auth", btoa(`${username}:${password}`)); // stocké encodé
-      navigate("/dashboard");
+      window.location.href = "/dashboard";
     } catch (err) {
-      console.error("❌ Échec de connexion :", err);
-      setError("Identifiants incorrects.");
+      console.error("Login error", err);
+      setError("Identifiants incorrects");
     }
   };
 
@@ -34,30 +33,13 @@ function LoginPage() {
       <h2>Connexion</h2>
       {error && <p style={{ color: "red" }}>{error}</p>}
       <form onSubmit={handleLogin}>
-        <div>
-          <label>Nom d'utilisateur :</label>
-          <input
-            type="text"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            required
-            style={{ width: "100%", padding: "0.5rem", marginBottom: "1rem" }}
-          />
-        </div>
-        <div>
-          <label>Mot de passe :</label>
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            style={{ width: "100%", padding: "0.5rem", marginBottom: "1rem" }}
-          />
-        </div>
-        <button type="submit" style={{ padding: "0.5rem 1rem" }}>Se connecter</button>
+        <input type="text" placeholder="Nom d'utilisateur" value={username} onChange={(e) => setUsername(e.target.value)} required />
+        <input type="password" placeholder="Mot de passe" value={password} onChange={(e) => setPassword(e.target.value)} required />
+        <button type="submit">Se connecter</button>
       </form>
     </div>
   );
 }
 
 export default LoginPage;
+
