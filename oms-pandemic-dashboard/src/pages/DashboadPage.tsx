@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getStatistics } from "../api/statistics";
+import { getStatistics } from "../api/Statistics";
 import {
   Chart as ChartJS,
   BarElement,
@@ -165,6 +165,9 @@ export default function DashboardPage() {
             </h3>
             <Pie data={pieData} />
           </div>
+        </div>
+        {/* Formulaire de prédiction IA */}
+        <div style={{ marginTop: "3rem" }}>
         </div>
       </main>
     </div>

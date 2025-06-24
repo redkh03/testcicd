@@ -4,6 +4,7 @@ import RegisterPage from "./pages/RegisterPage";
 import DashboardPage from "./pages/DashboadPage";
 import { useEffect, useState } from "react";
 import whoLogo from "./media/World-Health-Organization-Logo2.png";
+import PredictionPage from "./pages/PredictionPage";
 
 function App() {
   const [token, setToken] = useState<string | null>(localStorage.getItem("token"));
@@ -39,6 +40,7 @@ function App() {
             {isAuthenticated && (
               <>
                 <li><Link to="/dashboard" style={styles.link}>Dashboard</Link></li>
+                 <li><Link to="/predictions" style={styles.link}>Prédictions IA</Link></li>
                 <li><button onClick={handleLogout} style={styles.linkButton}>Logout</button></li>
               </>
             )}
@@ -52,6 +54,8 @@ function App() {
           <Route path="/register" element={!isAuthenticated ? <RegisterPage /> : <Navigate to="/dashboard" />} />
           <Route path="/dashboard" element={isAuthenticated ? <DashboardPage /> : <Navigate to="/login" />} />
           <Route path="*" element={<Navigate to={isAuthenticated ? "/dashboard" : "/login"} />} />
+          <Route path="/predictions" element={isAuthenticated ? <PredictionPage /> : <Navigate to="/login" />} />
+
         </Routes>
       </main>
     </Router>
