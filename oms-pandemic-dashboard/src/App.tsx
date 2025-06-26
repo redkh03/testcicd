@@ -3,7 +3,7 @@ import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import DashboardPage from "./pages/DashboadPage";
 import { useEffect, useState } from "react";
-import whoLogo from "./media/World-Health-Organization-Logo2.png";
+import whoLogo from "./media/World-Health-Organization-Logo3.png";
 import PredictionPage from "./pages/PredictionPage";
 
 function App() {
@@ -26,7 +26,7 @@ function App() {
     <Router>
       <header style={styles.header}>
         <div style={{ display: "flex", alignItems: "center" }}>
-          <img src={whoLogo} alt="Logo" style={{ height: 40, marginRight: 10 }} />
+          <img src={whoLogo} alt="Logo" style={{ height: 60, marginRight: 10 }} />
           <h1 style={styles.title}>Pandemic Dashboard</h1>
         </div>
         <nav>
@@ -71,13 +71,18 @@ const styles: any = {
     backgroundColor: "#1f2937",
     color: "white"
   },
-  title: { margin: 0, fontSize: "1.4rem" },
+  title: { 
+    margin: 10, 
+    fontSize: "1.4rem", 
+    padding: 10, 
+    textAlign: "center"
+  },
   navList: {
     display: "flex",
     listStyle: "none",
-    gap: "1rem",
-    margin: 0,
-    padding: 0
+    gap: "2rem",
+    margin: 10,
+    padding: 10
   },
   link: {
     color: "white",

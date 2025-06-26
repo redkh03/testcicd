@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import './LoginPage.css';
+import whoLogo from "../media/World-Health-Organization-Logo2.png";
 
 function LoginPage() {
   const [username, setUsername] = useState("");
@@ -29,13 +31,20 @@ function LoginPage() {
   };
 
   return (
-    <div style={{ maxWidth: 400, margin: "auto", padding: "2rem" }}>
-      <h2>Connexion</h2>
+    
+    <div className="login-wrapper">
       {error && <p style={{ color: "red" }}>{error}</p>}
-      <form onSubmit={handleLogin}>
+      <form className="login-form" onSubmit={handleLogin}>
+        <div className="logo-container">
+          <img src={whoLogo} alt="Logo OMS" />
+        </div>
+        <h2>Connexion</h2>
         <input type="text" placeholder="Nom d'utilisateur" value={username} onChange={(e) => setUsername(e.target.value)} required />
         <input type="password" placeholder="Mot de passe" value={password} onChange={(e) => setPassword(e.target.value)} required />
         <button type="submit">Se connecter</button>
+        <p className="register-text">
+          Pas encore de compte ? <a href="/register">Inscription</a>
+        </p>
       </form>
     </div>
   );

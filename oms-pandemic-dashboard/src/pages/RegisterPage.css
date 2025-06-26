@@ -1,0 +1,86 @@
+.register-wrapper {
+    max-width: 500px;
+    margin: 80px auto;
+    padding: 2.5rem;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+    font-family: 'Segoe UI', sans-serif;
+  }
+  
+  .register-wrapper h2 {
+    text-align: center;
+    margin-bottom: 1rem;
+    font-size: 1.8rem;
+    color: #1a237e;
+  }
+  
+  .register-wrapper p {
+    text-align: center;
+    color: #555;
+    margin-bottom: 1.5rem;
+    font-size: 0.95rem;
+  }
+  
+  .register-wrapper label {
+    display: block;
+    margin-bottom: 0.4rem;
+    font-weight: 600;
+    color: #333;
+  }
+  
+  .register-wrapper input[type="text"],
+  .register-wrapper input[type="email"],
+  .register-wrapper input[type="password"] {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 1rem;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    background-color: #f9f9f9;
+  }
+  
+  .register-wrapper input:focus {
+    outline: none;
+    border-color: #1976d2;
+    box-shadow: 0 0 0 2px rgba(25, 118, 210, 0.2);
+  }
+  
+  .register-wrapper button {
+    width: 100%;
+    padding: 12px;
+    background-color: #1976d2;
+    color: white;
+    font-size: 1rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .register-wrapper button:hover {
+    background-color: #125aab;
+  }
+  
+  .message {
+    text-align: center;
+    font-size: 0.95rem;
+    margin-bottom: 1rem;
+    padding: 0.75rem;
+    border-radius: 6px;
+  }
+  
+  .message.success {
+    color: #2e7d32;
+    background-color: #e8f5e9;
+    border: 1px solid #c8e6c9;
+  }
+  
+  .message.error {
+    color: #c62828;
+    background-color: #ffebee;
+    border: 1px solid #ef9a9a;
+  }
+  
