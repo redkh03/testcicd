@@ -28,8 +28,23 @@
   "scripts": {
     "start": "react-app-rewired start",
     "build": "react-app-rewired build",
-    "test": "react-app-rewired test",
-    "cypress": "cypress open"
+    "cy:open": "cross-env CYPRESS_COVERAGE=1 cypress open",
+    "cy:run": "cross-env CYPRESS_COVERAGE=1 cypress run",
+    "coverage:report": "nyc report --reporter=html"
+  },
+  "nyc": {
+    "exclude": [
+      "**/reportWebVitals.ts"
+    ],
+    "reporter": [
+      "text",
+      "html"
+    ],
+    "all": true,
+    "extension": [
+      ".ts",
+      ".tsx"
+    ]
   },
   "eslintConfig": {
     "extends": [
@@ -53,7 +68,12 @@
     "@cypress/code-coverage": "^3.14.5",
     "@types/react-simple-maps": "^3.0.6",
     "babel-plugin-istanbul": "^7.0.0",
+    "cross-env": "^7.0.3",
+    "customize-cra": "^1.0.0",
     "cypress": "^14.5.0",
-    "react-app-rewired": "^2.2.1"
+    "istanbul-lib-coverage": "^3.2.2",
+    "nyc": "^17.1.0",
+    "react-app-rewired": "^2.2.1",
+    "start-server-and-test": "^2.0.12"
   }
 }
