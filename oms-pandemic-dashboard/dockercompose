@@ -1,0 +1,57 @@
+version: '3.8'
+
+services:
+  # Frontend pour les États-Unis
+  frontend-us:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: oms-frontend-us
+    ports:
+      - "3001:80"
+    environment:
+      - NODE_ENV=production
+      - REACT_APP_API_URL=http://backend-us:8000/api
+      - REACT_APP_COUNTRY=US
+      - REACT_APP_LANGUAGE=en
+    networks:
+      - oms-network
+    restart: unless-stopped
+
+  # Frontend pour la France
+  frontend-fr:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: oms-frontend-fr
+    ports:
+      - "3002:80"
+    environment:
+      - NODE_ENV=production
+      - REACT_APP_API_URL=http://backend-fr:8000/api
+      - REACT_APP_COUNTRY=FR
+      - REACT_APP_LANGUAGE=fr
+    networks:
+      - oms-network
+    restart: unless-stopped
+
+  # Frontend pour la Suisse
+  frontend-ch:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: oms-frontend-ch
+    ports:
+      - "3003:80"
+    environment:
+      - NODE_ENV=production
+      - REACT_APP_API_URL=http://backend-ch:8000/api
+      - REACT_APP_COUNTRY=CH
+      - REACT_APP_LANGUAGE=fr  # Défaut français, mais supportera de/it
+    networks:
+      - oms-network
+    restart: unless-stopped
+
+networks:
+  oms-network:
+    driver: bridge
