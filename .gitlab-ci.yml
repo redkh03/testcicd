@@ -17,7 +17,7 @@ variables:
 # Ne créer la pipeline que sur push de la branche Workflows-CI-CD
 workflow:
   rules:
-    - if: '$CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == "Workflows-CI-CD"'
+    - if: '$CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == "ci/cd"'
       when: always
     - when: never
 
