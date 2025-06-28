@@ -6,18 +6,18 @@ services:
     alias: dind
 
 variables:
-  # Pour Docker-in-Docker
+  # Docker-in-Docker config
   DOCKER_HOST: tcp://dind:2375
   DOCKER_TLS_CERTDIR: ""
-  # Pour ton build React
+  # Répertoire de build React
   BUILD_DIR: build
-  # Nom et tag de ton image
+  # Nom de l'image Docker
   IMAGE_NAME: oms-frontend-ci
 
-# Ne créer la pipeline que sur push de la branche Workflows-CI-CD
+# Pipeline uniquement sur la branche ci/cd
 workflow:
   rules:
-    - if: '$CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == "Workflows-CI-CD"'
+    - if: '$CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH == "ci/cd"'
       when: always
     - when: never
 
@@ -30,33 +30,7 @@ cache:
   paths:
     - node_modules/
 
-# Tests (désactivé temporairement - décommentez quand prêt)
-# run_tests:
-#   stage: test
-#   image: node:lts
-#   before_script:
-#     - npm cache clean --force
-#   script:
-#     - npm install --frozen-lockfile
-#     # Vérifier si les tests existent
-#     - |
-#       if npm run test -- --help > /dev/null 2>&1; then
-#         echo "✅ Script de test trouvé"
-#         # Lancer les tests avec gestion d'erreur
-#         npm test -- --coverage --watchAll=false --passWithNoTests || true
-#       else
-#         echo "⚠️ Pas de script de test configuré"
-#         # Créer un dossier coverage vide pour éviter l'erreur d'artifact
-#         mkdir -p coverage
-#         echo "No tests configured" > coverage/README.txt
-#       fi
-#   artifacts:
-#     when: always
-#     paths:
-#       - coverage/
-#     expire_in: 1 week
-#   allow_failure: true
-
+# Étape 1 : Build de l'application React
 build_app:
   stage: build
   image: node:lts
@@ -70,23 +44,27 @@ build_app:
       - $BUILD_DIR
     expire_in: 1 week
 
+# Étape 2 : Build de l'image Docker et test
 docker_build:
   stage: docker-test
+  needs:
+    - job: build_app
+      artifacts: true
   script:
-    # 1) Build de l'image
+    # 1) Build de l'image Docker avec le build React
     - docker build -t $IMAGE_NAME:$CI_COMMIT_SHA .
-    
-    # 2) Lancement en arrière-plan
+
+    # 2) Lancer le container
     - docker run -d --name oms-test -p 8080:80 $IMAGE_NAME:$CI_COMMIT_SHA
-    
-    # 3) Attendre que le service soit ready
+
+    # 3) Attendre que le service soit prêt
     - |
       echo "🔄 Attente du démarrage du service..."
       for i in $(seq 1 15); do
         if docker exec oms-test test -f /usr/share/nginx/html/index.html; then
           echo "✅ Fichiers détectés, test de connexion..."
           sleep 2
-          if curl --retry 3 --retry-delay 2 --fail --connect-timeout 5 http://localhost:8080; then
+          if docker exec oms-test curl --retry 3 --retry-delay 2 --fail --connect-timeout 5 http://localhost; then
             echo "✅ Service ready et accessible"
             break
           fi
@@ -99,17 +77,14 @@ docker_build:
           exit 1
         fi
       done
-    
+
     # 4) Validation finale
     - echo "🔍 Test final de l'application..."
-    - curl --fail --silent --show-error http://localhost:8080
+    - docker exec oms-test curl --fail --silent --show-error http://localhost
     - echo "✅ Application validée avec succès"
-    
+
   after_script:
     - echo "🧹 Nettoyage des containers..."
     - docker stop oms-test || true
     - docker rm oms-test || true
     - docker rmi $IMAGE_NAME:$CI_COMMIT_SHA || true
-    
-  needs:
-    - build_app
